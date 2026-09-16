@@ -13,7 +13,7 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f4f6f9;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -33,119 +33,140 @@
             margin-bottom: 20px;
         }
         .category-select {
-            padding: 10px 15px;
+            padding: 12px 15px;
             font-size: 16px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
+            border-radius: 12px;
+            border: 2px solid #ddd;
             margin-top: 15px;
-            width: 260px;
+            width: 270px;
+            background-color: #fff;
+            outline: none;
         }
         .progress-box {
-            width: 260px;
+            width: 270px;
             margin: 15px auto 5px auto;
             text-align: center;
         }
         .progress-bar-bg {
             width: 100%;
             height: 12px;
-            background-color: #e0e0e0;
+            background-color: #e2e8f0;
             border-radius: 6px;
             overflow: hidden;
-            margin-top: 5px;
+            margin-top: 6px;
         }
         .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background-color: #52c41a;
+            background-color: #10b981;
             transition: width 0.3s ease;
         }
         .progress-text {
             font-size: 13px;
-            color: #555;
-            font-weight: bold;
+            color: #4b5563;
+            font-weight: 600;
         }
         .card-container {
             position: relative;
-            width: 310px;
-            height: 400px;
+            width: 320px;
+            height: 420px;
             perspective: 1000px;
         }
         .card {
             width: 100%;
             height: 100%;
             background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            border-top: 12px solid #38bdf8; /* Azzurro predefinito */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
             position: absolute;
             top: 0;
             left: 0;
-            transition: transform 0.1s ease, opacity 0.2s ease;
+            transition: transform 0.1s ease, opacity 0.2s ease, border-top-color 0.3s ease;
             cursor: pointer;
         }
+        .category-tag {
+            position: absolute;
+            top: 18px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #ffffff;
+            background-color: #38bdf8;
+        }
         .word-main {
-            font-size: 30px;
-            font-weight: bold;
-            color: #1a1a1a;
-            margin-bottom: 15px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-top: 15px;
+            margin-bottom: 20px;
         }
         .word-translation {
-            font-size: 19px;
-            color: #555;
-            margin: 4px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #374151;
+            margin: 4px 0 12px 0;
             display: none;
         }
         .hint {
             position: absolute;
             bottom: 20px;
             font-size: 13px;
-            color: #aaa;
+            color: #9ca3af;
+            font-style: italic;
         }
         .badge {
-            font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: #e9ecef;
-            color: #495057;
-            margin-bottom: 2px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            background: #f3f4f6;
+            color: #6b7280;
+            text-transform: uppercase;
         }
         .controls {
-            margin-top: 20px;
+            margin-top: 25px;
             display: flex;
             gap: 20px;
         }
         .btn {
-            padding: 12px 20px;
+            padding: 14px 22px;
             border: none;
             border-radius: 50px;
             font-size: 15px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .btn-left { background-color: #ff4d4f; color: white; }
-        .btn-right { background-color: #52c41a; color: white; }
+        .btn-left { background-color: #ef4444; color: white; }
+        .btn-right { background-color: #10b981; color: white; }
         .btn-back {
             position: absolute;
             top: 15px;
             left: 15px;
-            background: #e0e0e0;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 8px 14px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            color: #374151;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .btn-reset {
             margin-top: 15px;
             background: none;
             border: none;
-            color: #888;
+            color: #6b7280;
             text-decoration: underline;
             cursor: pointer;
             font-size: 13px;
@@ -153,7 +174,7 @@
         .stats {
             margin-top: 15px;
             font-size: 14px;
-            color: #666;
+            color: #6b7280;
             text-align: center;
         }
     </style>
@@ -164,7 +185,7 @@
     <div id="setupScreen" class="screen">
         <div class="header">
             <h2>Flashcards App</h2>
-            <p id="uploadPrompt">Upload your Excel file to start</p>
+            <p id="uploadPrompt" style="color:#6b7280; font-size:14px;">Upload your Excel file to start</p>
             <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" />
         </div>
 
@@ -179,7 +200,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-right" style="margin-top: 15px;" onclick="startStudy()">Start Review</button><br>
+            <button class="btn btn-right" style="margin-top: 20px;" onclick="startStudy()">Start Review</button><br>
             <button class="btn-reset" onclick="resetCurrentCategoryProgress()">Reset Category Progress</button>
         </div>
     </div>
@@ -197,6 +218,8 @@
 
         <div class="card-container" id="cardContainer">
             <div class="card" id="flashcard">
+                <div class="category-tag" id="cardCategoryTag">Category</div>
+
                 <div class="word-main" id="wordEnglish">Word</div>
                 
                 <div class="badge">Italian</div>
@@ -224,12 +247,26 @@
         let currentIndex = 0;
         let isRevealed = false;
 
+        // Nuova palette colori: Food = Rosso, Travel = Azzurro
+        const categoryColors = {
+            'Food': '#ef4444',      // Rosso
+            'Travel': '#38bdf8',    // Azzurro
+            'Home': '#8b5cf6',      // Viola
+            'Work': '#64748b',      // Grigio
+            'Nature': '#10b981',    // Verde
+            'Body': '#ec4899',      // Rosa
+            'City': '#eab308',      // Giallo
+            'Time': '#06b6d4',      // Ciano
+            'Feelings': '#dc2626',  // Rosso scuro
+            'Animals': '#84cc16'    // Verde chiaro
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             const savedData = localStorage.getItem('flashcard_words');
             if (savedData) {
                 allWords = JSON.parse(savedData);
                 populateCategories();
-                document.getElementById('uploadPrompt').innerText = "Word list loaded from memory. You can upload a new file to overwrite.";
+                document.getElementById('uploadPrompt').innerText = "Word list loaded from memory (" + allWords.length + " words). You can upload a new file to overwrite.";
             }
         });
 
@@ -246,10 +283,10 @@
 
                 allWords = jsonData.map((row, index) => ({
                     id: index,
-                    cat: row['Categoria'] || row['categoria'] || Object.values(row)[0] || 'General',
-                    en: row['Inglese'] || row['inglese'] || Object.values(row)[2] || Object.values(row)[1],
-                    it: row['Italiano'] || row['italiano'] || Object.values(row)[3] || Object.values(row)[2],
-                    de: row['Tedesco'] || row['tedesco'] || Object.values(row)[4] || Object.values(row)[3],
+                    cat: row['Category'] || row['Categoria'] || row['categoria'] || Object.values(row)[0] || 'General',
+                    en: row['English'] || row['Inglese'] || row['inglese'] || Object.values(row)[2],
+                    it: row['Italian'] || row['Italiano'] || row['italiano'] || Object.values(row)[3],
+                    de: row['German'] || row['Tedesco'] || row['tedesco'] || Object.values(row)[4],
                     learned: false
                 })).filter(item => item.en);
 
@@ -326,15 +363,21 @@
             document.getElementById('wordEnglish').innerText = current.en;
             document.getElementById('wordItalian').innerText = current.it || '-';
             document.getElementById('wordGerman').innerText = current.de || '-';
+            document.getElementById('cardCategoryTag').innerText = current.cat;
+
+            // Applica il colore dinamico alla scheda
+            const color = categoryColors[current.cat] || '#38bdf8';
+            const card = document.getElementById('flashcard');
+            card.style.borderTopColor = color;
+            document.getElementById('cardCategoryTag').style.backgroundColor = color;
 
             isRevealed = false;
             toggleTranslations(false);
 
-            const card = document.getElementById('flashcard');
             card.style.transform = 'translate(0, 0) rotate(0deg)';
             card.style.opacity = '1';
 
-            document.getElementById('stats').innerText = `Cards remaining to master: ${currentDeck.length}`;
+            document.getElementById('stats').innerText = `Cards remaining: ${currentDeck.length}`;
         }
 
         function updateStudyProgress() {
