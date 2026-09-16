@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -38,11 +38,11 @@
             border-radius: 8px;
             border: 1px solid #ccc;
             margin-top: 15px;
-            width: 240px;
+            width: 220px;
         }
         .card-container {
             position: relative;
-            width: 310px;
+            width: 320px;
             height: 420px;
             perspective: 1000px;
         }
@@ -51,7 +51,7 @@
             height: 100%;
             background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -61,9 +61,38 @@
             position: absolute;
             top: 0;
             left: 0;
-            transition: transform 0.1s ease, opacity 0.2s ease;
+            transition: transform 0.1s ease, opacity 0.2s ease, background-color 0.3s ease, color 0.3s ease;
             cursor: pointer;
         }
+
+        /* Colori dinamici in base al tipo di parola */
+        .card.card-noun {
+            background-color: #e6f7ff;
+            border: 2px solid #91d5ff;
+        }
+        .card.card-verb {
+            background-color: #fff1f0;
+            border: 2px solid #ffa39e;
+        }
+        .card.card-adjective {
+            background-color: #f6ffed;
+            border: 2px solid #b7eb8f;
+        }
+
+        .word-type-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+        .card-noun .word-type-tag { background: #bae7ff; color: #0050b3; }
+        .card-verb .word-type-tag { background: #ffccc7; color: #a8071a; }
+        .card-adjective .word-type-tag { background: #d9f7be; color: #237804; }
+
         .word-main {
             font-size: 32px;
             font-weight: bold;
@@ -72,7 +101,7 @@
         }
         .word-translation {
             font-size: 20px;
-            color: #555;
+            color: #434343;
             margin: 6px 0;
             display: none;
         }
@@ -80,32 +109,33 @@
             position: absolute;
             bottom: 20px;
             font-size: 13px;
-            color: #aaa;
+            color: #8c8c8c;
         }
         .badge {
-            font-size: 12px;
-            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
             border-radius: 4px;
-            background: #e9ecef;
-            color: #495057;
-            margin-bottom: 4px;
+            background: rgba(0, 0, 0, 0.06);
+            color: #595959;
+            margin-bottom: 2px;
         }
         .controls {
-            margin-top: 25px;
+            margin-top: 30px;
             display: flex;
             gap: 20px;
         }
         .btn {
-            padding: 12px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 50px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .btn-left { background-color: #ff4d4f; color: white; } /* Review Later */
-        .btn-right { background-color: #52c41a; color: white; } /* I Know It */
+        .btn-wrong { background-color: #ff4d4f; color: white; }
+        .btn-correct { background-color: #52c41a; color: white; }
         .btn-back {
             position: absolute;
             top: 15px;
@@ -115,16 +145,6 @@
             padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-reset {
-            margin-top: 15px;
-            background: none;
-            border: none;
-            color: #888;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 13px;
         }
         .stats {
             position: absolute;
@@ -136,43 +156,41 @@
 </head>
 <body>
 
-    <!-- Main Screen -->
     <div id="setupScreen" class="screen">
         <div class="header">
-            <h2>Flashcards App</h2>
-            <p id="uploadPrompt">Upload your Excel file to start</p>
-            <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" />
+            <h2>Flashcards</h2>
+            <input type="file" id="excelFile" class="file-input" accept=".xlsx, .xls" />
         </div>
 
         <div id="categoryContainer" style="display:none; text-align:center;">
-            <label for="categorySelect"><b>Select Category:</b></label><br>
+            <label for="categorySelect"><b>Scegli una categoria:</b></label><br>
             <select id="categorySelect" class="category-select"></select><br><br>
-            <button class="btn btn-right" onclick="startStudy()">Start Review</button><br>
-            <button class="btn-reset" onclick="resetCurrentCategoryProgress()">Reset Category Progress</button>
+            <button class="btn btn-correct" onclick="startStudy()">Inizia Ripasso</button>
         </div>
     </div>
 
-    <!-- Study Screen -->
     <div id="studyScreen" class="screen" style="display:none;">
-        <button class="btn-back" onclick="goBack()">← Categories</button>
+        <button class="btn-back" onclick="goBack()">← Categorie</button>
 
         <div class="card-container" id="cardContainer">
             <div class="card" id="flashcard">
+                <div class="word-type-tag" id="wordTypeTag">NOME</div>
+
                 <div class="word-main" id="wordEnglish">Word</div>
                 
-                <div class="badge">Italian</div>
-                <div class="word-translation" id="wordItalian">Translation</div>
+                <div class="badge">Italiano</div>
+                <div class="word-translation" id="wordItalian">Traduzione</div>
                 
-                <div class="badge" style="margin-top: 10px;">German</div>
-                <div class="word-translation" id="wordGerman">Translation</div>
+                <div class="badge" style="margin-top: 10px;">Tedesco</div>
+                <div class="word-translation" id="wordGerman">Traduzione</div>
 
-                <div class="hint" id="hintText">Tap to reveal meaning</div>
+                <div class="hint" id="hintText">Tocca per mostrare il significato</div>
             </div>
         </div>
 
         <div class="controls" id="controls">
-            <button class="btn btn-left" onclick="handleSwipe('left')">← Review Later</button>
-            <button class="btn btn-right" onclick="handleSwipe('right')">I Know It →</button>
+            <button class="btn btn-wrong" onclick="handleSwipe('left')">← Sbagliata</button>
+            <button class="btn btn-correct" onclick="handleSwipe('right')">Corretta →</button>
         </div>
     </div>
 
@@ -183,16 +201,6 @@
         let currentDeck = [];
         let currentIndex = 0;
         let isRevealed = false;
-
-        // Auto-load previously saved words from LocalStorage if available
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedData = localStorage.getItem('flashcard_words');
-            if (savedData) {
-                allWords = JSON.parse(savedData);
-                populateCategories();
-                document.getElementById('uploadPrompt').innerText = "Word list loaded from memory. You can upload a new file to overwrite.";
-            }
-        });
 
         document.getElementById('excelFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -205,33 +213,46 @@
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-                allWords = jsonData.map((row, index) => ({
-                    id: index,
-                    cat: row['Categoria'] || row['categoria'] || Object.values(row)[0] || 'General',
-                    en: row['Inglese'] || row['inglese'] || Object.values(row)[1],
-                    it: row['Italiano'] || row['italiano'] || Object.values(row)[2],
-                    de: row['Tedesco'] || row['tedesco'] || Object.values(row)[3],
-                    learned: false
-                })).filter(item => item.en);
+                allWords = jsonData.map(row => {
+                    let type = (row['Tipo'] || row['tipo'] || 'nome').toString().trim().toLowerCase();
+                    let en = (row['Inglese'] || row['inglese'] || '').toString().trim();
+                    let it = (row['Italiano'] || row['italiano'] || '').toString().trim();
+                    let de = (row['Tedesco'] || row['tedesco'] || '').toString().trim();
+
+                    // Formattazione speciale per i Verbi
+                    if (type.includes('verbo') || type === 'v') {
+                        type = 'verbo';
+                        if (!en.toLowerCase().startsWith('to ')) {
+                            en = 'to ' + en;
+                        }
+                    } else if (type.includes('agg') || type === 'adj') {
+                        type = 'aggettivo';
+                    } else {
+                        type = 'nome';
+                    }
+
+                    return {
+                        cat: row['Categoria'] || row['categoria'] || 'Generale',
+                        type: type,
+                        en: en,
+                        it: it,
+                        de: de
+                    };
+                }).filter(item => item.en);
 
                 if (allWords.length > 0) {
-                    saveToLocalStorage();
                     populateCategories();
                 } else {
-                    alert('No valid word list found in the Excel file.');
+                    alert('Nessun dato trovato nel file Excel.');
                 }
             };
             reader.readAsArrayBuffer(file);
         });
 
-        function saveToLocalStorage() {
-            localStorage.setItem('flashcard_words', JSON.stringify(allWords));
-        }
-
         function populateCategories() {
             const categories = [...new Set(allWords.map(w => w.cat))];
             const select = document.getElementById('categorySelect');
-            select.innerHTML = '<option value="ALL">All Categories</option>';
+            select.innerHTML = '<option value="ALL">Tutte le categorie</option>';
             
             categories.forEach(cat => {
                 const opt = document.createElement('option');
@@ -246,11 +267,10 @@
         function startStudy() {
             const selectedCat = document.getElementById('categorySelect').value;
             
-            // Filter out words that are already learned!
             if (selectedCat === 'ALL') {
-                currentDeck = allWords.filter(w => !w.learned);
+                currentDeck = [...allWords];
             } else {
-                currentDeck = allWords.filter(w => w.cat === selectedCat && !w.learned);
+                currentDeck = allWords.filter(w => w.cat === selectedCat);
             }
 
             currentIndex = 0;
@@ -263,7 +283,7 @@
             if (currentIndex >= currentDeck.length) {
                 document.getElementById('cardContainer').style.display = 'none';
                 document.getElementById('controls').style.display = 'none';
-                document.getElementById('stats').innerText = '🎉 Congratulations! Category completed!';
+                document.getElementById('stats').innerText = 'Hai completato questa categoria!';
                 return;
             }
 
@@ -271,6 +291,23 @@
             document.getElementById('controls').style.display = 'flex';
 
             const current = currentDeck[currentIndex];
+            const card = document.getElementById('flashcard');
+
+            // Assegna colore e tag in base al tipo
+            card.classList.remove('card-noun', 'card-verb', 'card-adjective');
+            const typeTag = document.getElementById('wordTypeTag');
+
+            if (current.type === 'verbo') {
+                card.classList.add('card-verb');
+                typeTag.innerText = 'VERBO';
+            } else if (current.type === 'aggettivo') {
+                card.classList.add('card-adjective');
+                typeTag.innerText = 'AGGETTIVO';
+            } else {
+                card.classList.add('card-noun');
+                typeTag.innerText = 'NOME';
+            }
+
             document.getElementById('wordEnglish').innerText = current.en;
             document.getElementById('wordItalian').innerText = current.it || '-';
             document.getElementById('wordGerman').innerText = current.de || '-';
@@ -278,7 +315,6 @@
             isRevealed = false;
             toggleTranslations(false);
 
-            const card = document.getElementById('flashcard');
             card.style.transform = 'translate(0, 0) rotate(0deg)';
             card.style.opacity = '1';
 
@@ -305,24 +341,17 @@
             card.style.opacity = '0';
 
             setTimeout(() => {
-                if (direction === 'right') {
-                    // SWIPE RIGHT (Tinder Like): Mark word as learned permanently
-                    const currentWord = currentDeck[currentIndex];
-                    const mainWord = allWords.find(w => w.id === currentWord.id);
-                    if (mainWord) mainWord.learned = true;
-                    
-                    saveToLocalStorage();
-                    currentDeck.splice(currentIndex, 1);
-                } else {
-                    // SWIPE LEFT (Tinder Pass): Move to end of queue to review again
+                if (direction === 'left') {
                     const wrongWord = currentDeck.splice(currentIndex, 1)[0];
                     currentDeck.push(wrongWord);
+                } else {
+                    currentIndex++;
                 }
                 showCard();
             }, 200);
         }
 
-        // Touch Swipe Gestures for Mobile
+        // Swipe Touch per Smartphone
         let startX = 0;
         const card = document.getElementById('flashcard');
 
@@ -334,19 +363,6 @@
             }
         });
 
-        function resetCurrentCategoryProgress() {
-            const selectedCat = document.getElementById('categorySelect').value;
-            if (confirm(`Reset progress for ${selectedCat === 'ALL' ? 'all categories' : selectedCat}?`)) {
-                allWords.forEach(w => {
-                    if (selectedCat === 'ALL' || w.cat === selectedCat) {
-                        w.learned = false;
-                    }
-                });
-                saveToLocalStorage();
-                alert('Progress reset successfully!');
-            }
-        }
-
         function goBack() {
             document.getElementById('studyScreen').style.display = 'none';
             document.getElementById('setupScreen').style.display = 'flex';
@@ -354,7 +370,7 @@
         }
 
         function updateStats() {
-            document.getElementById('stats').innerText = `Cards remaining: ${currentDeck.length - currentIndex}`;
+            document.getElementById('stats').innerText = `Rimanenti: ${currentDeck.length - currentIndex}`;
         }
     </script>
 </body>
