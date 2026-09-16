@@ -61,21 +61,21 @@
             position: absolute;
             top: 0;
             left: 0;
-            transition: transform 0.1s ease, opacity 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+            transition: transform 0.1s ease, opacity 0.2s ease, background-color 0.3s ease;
             cursor: pointer;
         }
 
-        /* Colori dinamici in base al tipo di parola */
+        /* 3 Colori Scheda */
         .card.card-noun {
-            background-color: #e6f7ff;
+            background-color: #e6f7ff; /* Azzurro per i Nomi */
             border: 2px solid #91d5ff;
         }
         .card.card-verb {
-            background-color: #fff1f0;
+            background-color: #fff1f0; /* Rosso chiaro per i Verbi */
             border: 2px solid #ffa39e;
         }
         .card.card-adjective {
-            background-color: #f6ffed;
+            background-color: #f6ffed; /* Verde chiaro per gli Aggettivi */
             border: 2px solid #b7eb8f;
         }
 
@@ -94,7 +94,7 @@
         .card-adjective .word-type-tag { background: #d9f7be; color: #237804; }
 
         .word-main {
-            font-size: 32px;
+            font-size: 30px;
             font-weight: bold;
             color: #1a1a1a;
             margin-bottom: 20px;
@@ -214,29 +214,21 @@
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
                 allWords = jsonData.map(row => {
-                    let type = (row['Tipo'] || row['tipo'] || 'nome').toString().trim().toLowerCase();
-                    let en = (row['Inglese'] || row['inglese'] || '').toString().trim();
-                    let it = (row['Italiano'] || row['italiano'] || '').toString().trim();
-                    let de = (row['Tedesco'] || row['tedesco'] || '').toString().trim();
-
-                    // Formattazione speciale per i Verbi
-                    if (type.includes('verbo') || type === 'v') {
+                    const rawType = (row['Tipo'] || row['tipo'] || '').toString().trim().toLowerCase();
+                    
+                    let type = 'nome';
+                    if (rawType.includes('verbo') || rawType === 'v') {
                         type = 'verbo';
-                        if (!en.toLowerCase().startsWith('to ')) {
-                            en = 'to ' + en;
-                        }
-                    } else if (type.includes('agg') || type === 'adj') {
+                    } else if (rawType.includes('agg') || rawType === 'adj') {
                         type = 'aggettivo';
-                    } else {
-                        type = 'nome';
                     }
 
                     return {
                         cat: row['Categoria'] || row['categoria'] || 'Generale',
                         type: type,
-                        en: en,
-                        it: it,
-                        de: de
+                        en: row['Inglese'] || row['inglese'] || '',
+                        it: row['Italiano'] || row['italiano'] || '',
+                        de: row['Tedesco'] || row['tedesco'] || ''
                     };
                 }).filter(item => item.en);
 
@@ -292,10 +284,10 @@
 
             const current = currentDeck[currentIndex];
             const card = document.getElementById('flashcard');
-
-            // Assegna colore e tag in base al tipo
-            card.classList.remove('card-noun', 'card-verb', 'card-adjective');
             const typeTag = document.getElementById('wordTypeTag');
+
+            // Imposta classe per colore e label
+            card.classList.remove('card-noun', 'card-verb', 'card-adjective');
 
             if (current.type === 'verbo') {
                 card.classList.add('card-verb');
@@ -351,7 +343,6 @@
             }, 200);
         }
 
-        // Swipe Touch per Smartphone
         let startX = 0;
         const card = document.getElementById('flashcard');
 
