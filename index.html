@@ -78,7 +78,7 @@
             background: #ffffff;
             border-radius: 24px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-            border-top: 12px solid #38bdf8; /* Azzurro predefinito */
+            border-top: 12px solid #38bdf8;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -91,23 +91,33 @@
             transition: transform 0.1s ease, opacity 0.2s ease, border-top-color 0.3s ease;
             cursor: pointer;
         }
-        .category-tag {
+        .type-tag {
             position: absolute;
             top: 18px;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 4px 12px;
+            letter-spacing: 0.5px;
+            padding: 4px 14px;
             border-radius: 20px;
             color: #ffffff;
             background-color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .category-subtag {
+            position: absolute;
+            top: 48px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
         }
         .word-main {
             font-size: 32px;
             font-weight: 800;
             color: #1f2937;
-            margin-top: 15px;
+            margin-top: 25px;
             margin-bottom: 20px;
         }
         .word-translation {
@@ -218,7 +228,8 @@
 
         <div class="card-container" id="cardContainer">
             <div class="card" id="flashcard">
-                <div class="category-tag" id="cardCategoryTag">Category</div>
+                <div class="type-tag" id="cardTypeTag"><span id="cardIcon">📦</span> <span id="cardTypeText">NOUN</span></div>
+                <div class="category-subtag" id="cardCategorySubtag">Category</div>
 
                 <div class="word-main" id="wordEnglish">Word</div>
                 
@@ -247,18 +258,17 @@
         let currentIndex = 0;
         let isRevealed = false;
 
-        // Nuova palette colori: Food = Rosso, Travel = Azzurro
-        const categoryColors = {
-            'Food': '#ef4444',      // Rosso
-            'Travel': '#38bdf8',    // Azzurro
-            'Home': '#8b5cf6',      // Viola
-            'Work': '#64748b',      // Grigio
-            'Nature': '#10b981',    // Verde
-            'Body': '#ec4899',      // Rosa
-            'City': '#eab308',      // Giallo
-            'Time': '#06b6d4',      // Ciano
-            'Feelings': '#dc2626',  // Rosso scuro
-            'Animals': '#84cc16'    // Verde chiaro
+        // Mappa dei colori e delle icone per tipo di parola
+        const typeConfig = {
+            'Noun': { color: '#38bdf8', icon: '📦' },
+            'Sostantivo': { color: '#38bdf8', icon: '📦' },
+            'Nome': { color: '#38bdf8', icon: '📦' },
+
+            'Verb': { color: '#10b981', icon: '⚡' },
+            'Verbo': { color: '#10b981', icon: '⚡' },
+
+            'Adjective': { color: '#ef4444', icon: '🎨' },
+            'Aggettivo': { color: '#ef4444', icon: '🎨' }
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -281,14 +291,18 @@
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-                allWords = jsonData.map((row, index) => ({
-                    id: index,
-                    cat: row['Category'] || row['Categoria'] || row['categoria'] || Object.values(row)[0] || 'General',
-                    en: row['English'] || row['Inglese'] || row['inglese'] || Object.values(row)[2],
-                    it: row['Italian'] || row['Italiano'] || row['italiano'] || Object.values(row)[3],
-                    de: row['German'] || row['Tedesco'] || row['tedesco'] || Object.values(row)[4],
-                    learned: false
-                })).filter(item => item.en);
+                allWords = jsonData.map((row, index) => {
+                    const keys = Object.keys(row);
+                    return {
+                        id: index,
+                        cat: row['Category'] || row['Categoria'] || row['categoria'] || row[keys[0]] || 'General',
+                        type: row['Type'] || row['Tipo'] || row['tipo'] || row[keys[1]] || 'Noun',
+                        en: row['English'] || row['Inglese'] || row['inglese'] || row[keys[2]],
+                        it: row['Italian'] || row['Italiano'] || row['italiano'] || row[keys[3]],
+                        de: row['German'] || row['Tedesco'] || row['tedesco'] || row[keys[4]],
+                        learned: false
+                    };
+                }).filter(item => item.en);
 
                 if (allWords.length > 0) {
                     saveToLocalStorage();
@@ -363,13 +377,15 @@
             document.getElementById('wordEnglish').innerText = current.en;
             document.getElementById('wordItalian').innerText = current.it || '-';
             document.getElementById('wordGerman').innerText = current.de || '-';
-            document.getElementById('cardCategoryTag').innerText = current.cat;
+            
+            const typeInfo = typeConfig[current.type] || { color: '#38bdf8', icon: '📌' };
+            document.getElementById('cardIcon').innerText = typeInfo.icon;
+            document.getElementById('cardTypeText').innerText = current.type || 'Noun';
+            document.getElementById('cardCategorySubtag').innerText = current.cat;
 
-            // Applica il colore dinamico alla scheda
-            const color = categoryColors[current.cat] || '#38bdf8';
             const card = document.getElementById('flashcard');
-            card.style.borderTopColor = color;
-            document.getElementById('cardCategoryTag').style.backgroundColor = color;
+            card.style.borderTopColor = typeInfo.color;
+            document.getElementById('cardTypeTag').style.backgroundColor = typeInfo.color;
 
             isRevealed = false;
             toggleTranslations(false);
